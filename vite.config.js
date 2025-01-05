@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import {defineConfig} from "vite";
 import laravel from "laravel-vite-plugin";
 import react from "@vitejs/plugin-react";
 
@@ -17,10 +17,10 @@ export default defineConfig({
         hmr: {
             host: 'localhost',
         },
-        https:true,
+        https: true,
         proxy: {
             '/api/v1': {
-                target: 'https://starkbrokers.com',
+                target: 'https://www.starkbrokers.com',
                 changeOrigin: true,
                 secure: true,
             }
