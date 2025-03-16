@@ -17,10 +17,10 @@ export default defineConfig({
         hmr: {
             host: 'localhost',
         },
-        https: true,
+        https: false,
         proxy: {
             '/api/v1': {
-                target: 'https://www.starkbrokers.com',
+                target: 'http://localhost:8000',
                 changeOrigin: true,
                 secure: true,
             }
