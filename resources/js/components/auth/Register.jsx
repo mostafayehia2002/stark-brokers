@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { authAPI } from '../../services/api'
-import { formatPhoneNumber, validateSaudiPhone } from '../../utils/phoneUtils'
+import { formatPhoneNumber, isValidPhoneNumber, detectCountryCode } from '../../utils/phoneUtils'
 import { toast } from 'react-hot-toast'
 import { useAuth } from '../../contexts/AuthContext'
 
 export default function Register({ language, userType }) {
-  const { user, logout, login } = useAuth()
+  const { user, logout } = useAuth()
   const [step, setStep] = useState('register') // 'register' or 'otp'
   const [formData, setFormData] = useState({
     full_name: '',
@@ -41,17 +41,17 @@ export default function Register({ language, userType }) {
       invalidOtp: 'Invalid OTP. Please try again.',
       resendOtp: 'Resend OTP',
       loginLink: 'Already have an account? Login',
-      validationErrors: {
-        fullNameRequired: 'Full name is required',
-        emailRequired: 'Email is required',
-        emailInvalid: 'Please enter a valid email address',
-        phoneRequired: 'Phone number is required',
-        phoneInvalid: 'Please enter a valid Saudi phone number',
-        addressRequired: 'Address is required',
-        businessNameRequired: 'Business name is required for owners',
-        businessLicenseRequired: 'Business license is required for owners',
-        phoneExists: 'This phone number is already registered'
-      },
+       validationErrors: {
+         fullNameRequired: 'Full name is required',
+         emailRequired: 'Email is required',
+         emailInvalid: 'Please enter a valid email address',
+         phoneRequired: 'Phone number is required',
+         phoneInvalid: 'Please enter a valid Saudi (+966) or Egyptian (+20) phone number',
+         addressRequired: 'Address is required',
+         businessNameRequired: 'Business name is required for owners',
+         businessLicenseRequired: 'Business license is required for owners',
+         phoneExists: 'This phone number is already registered'
+       },
       placeholders: {
         name: 'Enter your full name',
         email: 'example@email.com',
@@ -82,18 +82,18 @@ export default function Register({ language, userType }) {
       invalidOtp: 'رمز التحقق غير صحيح. حاول مرة أخرى.',
       resendOtp: 'إعادة إرسال الرمز',
       loginLink: 'لديك حساب بالفعل؟ تسجيل الدخول',
-      validationErrors: {
-        fullNameRequired: 'الاسم الكامل مطلوب',
-        emailRequired: 'البريد الإلكتروني مطلوب',
-        emailInvalid: 'يرجى إدخال بريد إلكتروني صحيح',
-        phoneRequired: 'رقم الهاتف مطلوب',
-        phoneInvalid: 'يرجى إدخال رقم هاتف سعودي صحيح',
-        addressRequired: 'العنوان مطلوب',
-        businessNameRequired: 'اسم الشركة مطلوب للملاك',
-        businessLicenseRequired: 'رقم الرخصة التجارية مطلوب للملاك',
-        phoneExists: 'رقم الهاتف مسجل بالفعل',
-        phoneTaken: 'رقم الهاتف مستخدم بالفعل'
-      },
+       validationErrors: {
+         fullNameRequired: 'الاسم الكامل مطلوب',
+         emailRequired: 'البريد الإلكتروني مطلوب',
+         emailInvalid: 'يرجى إدخال بريد إلكتروني صحيح',
+         phoneRequired: 'رقم الهاتف مطلوب',
+         phoneInvalid: 'يرجى إدخال رقم هاتف سعودي صحيح (+966) أو مصري (+20)',
+         addressRequired: 'العنوان مطلوب',
+         businessNameRequired: 'اسم الشركة مطلوب للملاك',
+         businessLicenseRequired: 'رقم الرخصة التجارية مطلوب للملاك',
+         phoneExists: 'رقم الهاتف مسجل بالفعل',
+         phoneTaken: 'رقم الهاتف مستخدم بالفعل'
+       },
       placeholders: {
         name: 'أدخل اسمك الكامل',
         email: 'example@email.com',
@@ -129,11 +129,11 @@ export default function Register({ language, userType }) {
       setError(t.validationErrors.phoneRequired);
       return false;
     }
-    const formattedPhone = formatPhoneNumber(formData.phone);
-    if (!validateSaudiPhone(formattedPhone)) {
-      setError(t.validationErrors.phoneInvalid);
-      return false;
-    }
+     const formattedPhone = formatPhoneNumber(formData.phone);
+     if (!isValidPhoneNumber(formattedPhone)) {
+       setError(t.validationErrors.phoneInvalid);
+       return false;
+     }
 
     if (!formData.address?.trim()) {
       setError(t.validationErrors.addressRequired);
@@ -399,7 +399,13 @@ export default function Register({ language, userType }) {
                   </label>
                   <div className="mt-1 relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <span className="text-gray-500 sm:text-sm">+966</span>
+                      <span className="text-gray-500 sm:text-sm">
+                        {detectCountryCode(formData.phone) === 'EG'
+                          ? '+20'
+                          : detectCountryCode(formData.phone) === 'SA'
+                            ? '+966'
+                            : '+'}
+                      </span>
                     </div>
                     <input
                       id="phone"
@@ -407,13 +413,28 @@ export default function Register({ language, userType }) {
                       required
                       placeholder={t.placeholders.phone}
                       className="pl-16 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary focus:border-primary"
-                      value={formData.phone.replace(/^\+966/, '')}
+                      value={formData.phone.replace(/^\+966/, '').replace(/^\+20/, '')}
                       onChange={(e) => {
                         const input = e.target.value.replace(/\D/g, '');
-                        const phone = input.length > 0 ? `+966${input}` : '';
+                        if (!input) {
+                          setFormData({ ...formData, phone: '' });
+                          return;
+                        }
+
+                        // Only auto-prefix when the country is clear; otherwise keep raw digits
+                        let phone = input;
+                        if (input.startsWith('20')) {
+                          phone = `+${input}`;
+                        } else if (input.startsWith('966')) {
+                          phone = `+${input}`;
+                        } else if (input.startsWith('10') || input.startsWith('11') || input.startsWith('12')) {
+                          phone = `+20${input}`;
+                        } else if (input.startsWith('5')) {
+                          phone = `+966${input}`;
+                        }
                         setFormData({ ...formData, phone });
                       }}
-                      maxLength="9"
+                      maxLength="15"
                       dir="ltr"
                     />
                   </div>

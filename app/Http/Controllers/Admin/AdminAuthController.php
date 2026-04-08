@@ -24,7 +24,6 @@ class AdminAuthController extends Controller
         }
         toastr()->error($response['message']);
         return redirect()->back()->withInput($request->only('login', 'password', 'remember'));
-
     }
 
     public function logout(){

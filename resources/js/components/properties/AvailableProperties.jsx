@@ -247,7 +247,7 @@ const PropertyCard = memo(({ property, language, onNavigate }) => {
 
     return (
         <div
-            className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 cursor-pointer"
+            className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 cursor-pointer h-full min-h-[560px] flex flex-col"
             onClick={() => onNavigate(property.id)}
         >
             <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
@@ -304,7 +304,7 @@ const PropertyCard = memo(({ property, language, onNavigate }) => {
                 </button>
             </div>
 
-            <div className="p-6">
+            <div className={`p-6 flex flex-1 flex-col ${language === 'ar' ? 'text-right' : 'text-left'}`}>
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
                         <h3 className="text-xl font-semibold line-clamp-2 text-gray-800">
@@ -363,7 +363,7 @@ const PropertyCard = memo(({ property, language, onNavigate }) => {
                     </div>
                 )}
 
-                <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+                <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <span className="text-gray-500 text-sm">{t.from}</span>
                         <p className="text-[#BE092B] font-bold text-xl">
@@ -375,7 +375,7 @@ const PropertyCard = memo(({ property, language, onNavigate }) => {
                             e.stopPropagation();
                             onNavigate(property.id);
                         }}
-                        className="px-4 py-2 bg-[#BE092B]/90 text-white rounded-lg hover:bg-[#8a1328] transition-colors"
+                        className="w-full sm:w-auto px-4 py-2 bg-[#BE092B]/90 text-white rounded-lg hover:bg-[#8a1328] transition-colors whitespace-nowrap"
                     >
                         {t.viewDetails}
                     </button>
@@ -606,15 +606,16 @@ export default function AvailableProperties({ language }) {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredProperties.map(property => (
-                        <PropertyCard
-                            key={property.id}
-                            property={property}
-                            language={language}
-                            onNavigate={handleNavigate}
-                        />
+                        <div key={property.id} className="h-full">
+                            <PropertyCard
+                                property={property}
+                                language={language}
+                                onNavigate={handleNavigate}
+                            />
+                        </div>
                     ))}
                 </div>
             )}
         </div>
     );
-} 
+}

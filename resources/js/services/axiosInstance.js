@@ -1,8 +1,9 @@
 import axios from 'axios'
 
-const isDevelopment = import.meta.env.DEV
+// const isDevelopment = import.meta.env.DEV
 
-const API_URL = isDevelopment ? 'http://127.0.0.1:8000' : import.meta.env.VITE_APP_URL;
+// Use the same origin as the frontend for API requests (fixes CORS issues)
+const API_URL = import.meta.env.VITE_APP_URL || `${window.location.protocol}//${window.location.hostname}:${window.location.port || (window.location.protocol === 'https:' ? 443 : 80)}`
 
 const axiosInstance = axios.create({
     baseURL: `${API_URL}/api/v1`, // Add /api/v1 to base URL to match API endpoints

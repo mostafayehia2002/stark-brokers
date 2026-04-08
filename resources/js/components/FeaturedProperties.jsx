@@ -183,7 +183,7 @@ export default function FeaturedProperties({ language }) {
     console.log('Rendering property:', property);
 
     return (
-      <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
+      <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 h-full min-h-[560px] flex flex-col">
         <div className="relative">
           <img
             src={property.images?.[0]?.url || 'https://placehold.co/600x400?text=No+Image'}
@@ -211,7 +211,7 @@ export default function FeaturedProperties({ language }) {
           </button>
         </div>
 
-        <div className="p-6">
+        <div className={`p-6 flex flex-1 flex-col ${language === 'ar' ? 'text-right' : 'text-left'}`}>
           {property.address && (
             <div className="flex items-center gap-2 text-gray-500 text-sm mb-2">
               <IoLocationOutline className="text-[#BE092B]" />
@@ -260,7 +260,7 @@ export default function FeaturedProperties({ language }) {
             </div>
           )}
 
-          <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+          <div className="mt-auto pt-4 border-t border-gray-100 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <span className="text-gray-500 text-sm">{t.from}</span>
               <p className="text-[#BE092B] font-bold text-xl">
@@ -268,8 +268,9 @@ export default function FeaturedProperties({ language }) {
               </p>
             </div>
             <button
-              onClick={() => navigate(`/properties/${property.id}`)}
-              className="px-4 py-2 bg-[#BE092B]/90 text-white rounded-lg hover:bg-[#8a1328] transition-colors"
+              onClick={() => property.id && navigate(`/properties/${property.id}`)}
+              disabled={!property.id}
+              className="w-full sm:w-auto px-4 py-2 bg-[#BE092B]/90 text-white rounded-lg hover:bg-[#8a1328] transition-colors whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {t.viewDetails}
             </button>
@@ -326,7 +327,9 @@ export default function FeaturedProperties({ language }) {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
               {properties.map(property => (
-                <PropertyCard key={property.id} property={property} />
+                <div key={property.id} className="h-full">
+                  <PropertyCard property={property} />
+                </div>
               ))}
             </div>
 
@@ -343,4 +346,4 @@ export default function FeaturedProperties({ language }) {
       </div>
     </section>
   );
-} 
+}

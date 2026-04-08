@@ -49,8 +49,8 @@ class AdminAuthService
     public function logout(): array
     {
         try {
-
             if (Auth::check()) {
+
                 Auth::logout();
                 return [
                     'success' => true,

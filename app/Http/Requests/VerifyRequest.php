@@ -26,7 +26,7 @@ class VerifyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone' => ['required', 'regex:/^\+\d{1,3}\d{6,14}$/'],
+            'phone' => ['required', 'regex:/^(\+966\d{9}|\+20\d{10})$/'],
             'otp' => 'required|string',
             'type' => 'required|in:owner,renter',
            // 'session_id' => 'required|string',

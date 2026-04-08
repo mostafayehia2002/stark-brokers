@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { FiPhone, FiLock } from 'react-icons/fi'
-import { formatPhoneNumber, validateSaudiPhone } from '../../utils/phoneUtils'
+import { formatPhoneNumber, isValidPhoneNumber } from '../../utils/phoneUtils'
 import { toast } from 'react-hot-toast'
 // import { firebaseAuthService } from '../../services/firebaseAuthService' // Commented for now
 
@@ -16,59 +16,60 @@ export default function Login({ language, userType }) {
   const { login, verifyOTP } = useAuth()
   const navigate = useNavigate()
 
-  const content = {
-    en: {
-      renterTitle: 'Renter Login',
-      ownerTitle: 'Owner Login',
-      phone: 'Phone Number',
-      otp: 'Enter OTP',
-      sendOtp: 'Send OTP',
-      verifyOtp: 'Verify OTP',
-      registerLink: "Don't have an account? Register",
-      phoneRequired: 'Phone number is required',
-      phoneInvalid: 'Please enter a valid phone number',
-      otpRequired: 'OTP is required',
-      otpInvalid: 'Please enter a valid OTP',
-      resendOtp: 'Resend OTP',
-      otpSent: 'OTP has been sent to your phone',
-      verificationFailed: 'Verification failed. Please try again.',
-      invalidOTP: 'Invalid OTP code. Please try again.'
-    },
-    ar: {
-      renterTitle: 'تسجيل دخول المستأجر',
-      ownerTitle: 'تسجيل دخول المالك',
-      phone: 'رقم الهاتف',
-      otp: 'رمز التحقق',
-      sendOtp: 'إرسال رمز التحقق',
-      verifyOtp: 'تحقق من الرمز',
-      registerLink: 'ليس لديك حساب سجل الآن',
-      phoneRequired: 'رقم الهاتف مطلوب',
-      phoneInvalid: 'الرجاء إدخال رقم هاتف صحيح',
-      otpRequired: 'رمز التحقق مطلوب',
-      otpInvalid: 'الرجاء إدخال رمز تحقق صحيح',
-      resendOtp: 'إعادة إرسال الرمز',
-      otpSent: 'تم إرسال رمز التحقق إلى هاتفك',
-      verificationFailed: 'فشل التحقق. يرجى المحاولة مرة أخرى.',
-      invalidOTP: 'رمز التحقق غير صحيح. حاول مرة اخرى.'
-    }
-  }
+   const content = {
+     en: {
+       renterTitle: 'Renter Login',
+       ownerTitle: 'Owner Login',
+       phone: 'Phone Number',
+       otp: 'Enter OTP',
+       sendOtp: 'Send OTP',
+       verifyOtp: 'Verify OTP',
+       registerLink: "Don't have an account? Register",
+       phoneRequired: 'Phone number is required',
+       phoneInvalid: 'Please enter a valid Saudi (+966) or Egyptian (+20) phone number',
+       otpRequired: 'OTP is required',
+       otpInvalid: 'Please enter a valid OTP',
+       resendOtp: 'Resend OTP',
+       otpSent: 'OTP has been sent to your phone',
+       verificationFailed: 'Verification failed. Please try again.',
+       invalidOTP: 'Invalid OTP code. Please try again.'
+     },
+     ar: {
+       renterTitle: 'تسجيل دخول المستأجر',
+       ownerTitle: 'تسجيل دخول المالك',
+       phone: 'رقم الهاتف',
+       otp: 'رمز التحقق',
+       sendOtp: 'إرسال رمز التحقق',
+       verifyOtp: 'تحقق من الرمز',
+       registerLink: 'ليس لديك حساب سجل الآن',
+       phoneRequired: 'رقم الهاتف مطلوب',
+       phoneInvalid: 'يرجى إدخال رقم هاتف سعودي صحيح (+966) أو مصري (+20)',
+       otpRequired: 'رمز التحقق مطلوب',
+       otpInvalid: 'الرجاء إدخال رمز تحقق صحيح',
+       resendOtp: 'إعادة إرسال الرمز',
+       otpSent: 'تم إرسال رمز التحقق إلى هاتفك',
+       verificationFailed: 'فشل التحقق. يرجى المحاولة مرة أخرى.',
+       invalidOTP: 'رمز التحقق غير صحيح. حاول مرة اخرى.'
+     }
+   }
 
   const t = content[language]
 
-  const validatePhone = () => {
-    if (!phoneNumber) {
-      setError(t.phoneRequired)
-      return false
-    }
+   const validatePhone = () => {
+     if (!phoneNumber) {
+       setError(t.phoneRequired)
+       return false
+     }
 
-    const formattedPhone = formatPhoneNumber(phoneNumber);
-    if (!validateSaudiPhone(formattedPhone)) {
-      setError(t.phoneInvalid)
-      return false
-    }
+     const formattedPhone = formatPhoneNumber(phoneNumber);
+     // Accept both Saudi and Egyptian phone numbers
+     if (!isValidPhoneNumber(formattedPhone)) {
+       setError(t.phoneInvalid)
+       return false
+     }
 
-    return true
-  }
+     return true
+   }
 
   const validateOtp = () => {
     if (!otp) {
@@ -186,17 +187,17 @@ export default function Login({ language, userType }) {
                     <FiPhone className="text-gray-400" />
                   </div>
 
-                  <input
-                    id="phone"
-                    type="tel"
-                    required
-                    className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    placeholder="+966 5XXXXXXXX"
-                    dir="ltr"
-                    disabled={isLoading}
-                  />
+                   <input
+                     id="phone"
+                     type="tel"
+                     required
+                     className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
+                     value={phoneNumber}
+                     onChange={(e) => setPhoneNumber(e.target.value)}
+                     placeholder="+966 5XXXXXXXX or +20 1XXXXXXXXX"
+                     dir="ltr"
+                     disabled={isLoading}
+                   />
                 </div>
               </div>
             ) : (
@@ -261,4 +262,4 @@ export default function Login({ language, userType }) {
       </div>
     </div>
   )
-} 
+}

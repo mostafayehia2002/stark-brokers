@@ -17,6 +17,7 @@ class RedirectIfAuth
     public function handle(Request $request, Closure $next): Response
     {
         if(Auth::check()){
+
             return redirect()->route('admin.dashboard');
         }
         return $next($request);

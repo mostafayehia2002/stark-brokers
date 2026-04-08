@@ -30,7 +30,7 @@ class UserRegisterRequest extends FormRequest
         return [
             //'regex:/^\+966\d{9}$/'
             'full_name' =>'required|string',
-            'phone' => ['required','regex:/^\+966\d{9}$/',Rule::unique('users')->where('type', $this->input('type')).$id],
+            'phone' => ['required','regex:/^(\+966\d{9}|\+20\d{10})$/',Rule::unique('users')->where('type', $this->input('type')).$id],
             'email' => 'required|email|unique:users,email,'.$id,
             'type' => 'required|in:owner,renter',
             'business_name' =>'required_if:type,owner',

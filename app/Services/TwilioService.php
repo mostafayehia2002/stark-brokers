@@ -33,7 +33,7 @@ class TwilioService
     public function sendVerificationCode($phoneNumber): array
     {
         try {
-            if (!preg_match('/^\+966\d{8,9}$/', $phoneNumber)) {
+            if (!preg_match('/^(\+966\d{9}|\+20\d{10})$/', $phoneNumber)) {
                 return [
                     'success' => false,
                     'status' => 400,
@@ -88,11 +88,11 @@ class TwilioService
     public function sendSMS($toPhoneNumber, $message): array
     {
         try {
-            if (!preg_match('/^\+966\d{8,9}$/', $toPhoneNumber)) {
+            if (!preg_match('/^(\+966\d{9}|\+20\d{10})$/', $toPhoneNumber)) {
                 return [
                     'success' => false,
                     'status' => 400,
-                    'message' => 'Invalid phone number format. It should start with +966 followed by 8 or 9 digits.',
+                    'message' => 'Invalid phone number format. It should start with +966 (Saudi) or +20 (Egypt).',
                 ];
             }
 
