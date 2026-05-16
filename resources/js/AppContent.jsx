@@ -24,7 +24,6 @@ import { Toaster } from 'react-hot-toast';
 
 export default function AppContent() {
     const { language } = useLanguage();
-
     return (
         <>
             <Toaster position="top-right" />
@@ -77,4 +76,4 @@ export default function AppContent() {
             </div>
         </>
     );
-} 
+}

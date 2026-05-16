@@ -39,7 +39,6 @@ class SettingServiceProvider extends ServiceProvider
         try {
             // Check if database is connected
             DB::connection()->getPdo();
-
             // Load settings and cache them
             if (Schema::hasTable('settings')) {
                 $this->loadSettings();

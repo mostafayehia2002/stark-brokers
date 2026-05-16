@@ -195,12 +195,12 @@ For issues, feature requests, or questions:
 
 ## 🤝 Project Information
 
-- **Repository**: https://github.com/mostafayehia2002/starkbrokers
+- **Repository**:`https://github.com/mostafayehia2002/stark-brokers`
 - **Author**: Mostafa Yehia
 - **Maintained**: Actively developed and maintained
 
 ---
 
-**Made with ❤️ using Laravel 12 • [Star on GitHub ⭐](https://github.com/mostafayehia2002/starkbrokers)**
+**Made with ❤️ using Laravel 12 • [Star on GitHub ⭐](https://github.com/mostafayehia2002/stark-brokers)**
 
 
